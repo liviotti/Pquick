@@ -8,13 +8,19 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 
+#imports of io and reportlab are necessary for pdf creation
+#import json to import the controls file
+
 #PQuick- nome per ora
 
 
 #this is the global page configuration 
 st.set_page_config(page_title="PQUICK", page_icon="☃︎", layout="wide")
+#title
 st.title("PQuick")
 st.write("This tool was developed to offer guidance for the post-quantum transition for italian organisations")
+
+#this is to inject css into streamlit: better design of buttons. injection through unsafeallow
 st.markdown("""
 <style>
 .stAlert, .stDownloadButton button {
@@ -39,8 +45,8 @@ hr { margin: 0.6rem 0 1.0rem 0; opacity: 0.25; }
 """, unsafe_allow_html=True)
 
 
-#the following part allows to load all the controls contained in the json
-#the expected output is a phase-answer option structure
+#the following part allows to load all the controls contained in the json, uploads as python dictionary
+#the expected output is a phase-answer option structure, security control for error (the json might be structured wrongly)
 def controlli_caricati():
     with open("controlli_tutti.json", "r", encoding="utf-8") as f:
         return json.load(f)
@@ -54,7 +60,7 @@ answer_options = data.get("answer_options", ["yes", "partial", "no", "na"])
 if "responses" not in st.session_state:
     st.session_state.responses = {}
 
-
+#mantiene dati nella sessione con stsessionstate
     
 
 # to ensure the field is treated as a list from the json
@@ -66,11 +72,11 @@ def ensure_list(x):
         return x
     return [x]
 
-#this is to get the recommendation associated to each of the answer of the questionnaire, the controls
+#this is to get the recommendation associated to each of the answer of the questionnaire
 def get_recommendation(control, answer):
-    """Prende la raccomandazione corretta da actions[answer]."""
     actions = control.get("actions", {})
     return actions.get(answer, "")
+#makes everything a list
 def flatten_controls(phases):
     rows = []
     for ph in phases:
