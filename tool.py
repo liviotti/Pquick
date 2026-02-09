@@ -93,7 +93,7 @@ def flatten_controls(phases):
 # this section contains the scoring logic of the tool
 def compute_scores(phases, responses):
     all_controls = flatten_controls(phases)
-
+#here it takes the sum of point for each phase, then considers the non applicable response as null, then it makes a line for each
     phase_sum = {}
     phase_app = {}
     summary_rows = []
@@ -124,7 +124,7 @@ def compute_scores(phases, responses):
             "score": score_value,
             "recommendation": rec
         })
-
+#qui c'è scoring delle fasi e totale
     phase_scores_pct = {}
     for ph_name in phase_sum:
         denom = 2 * phase_app[ph_name]
@@ -159,21 +159,21 @@ def build_pdf(
         c.drawString(x_margin, y, text)
         y -= dy
 
-    # ---- Title ----
+    # title
     c.setFont("Helvetica-Bold", 18)
     line(f"{tool_name} – Post-Quantum Readiness Report", 24)
 
     c.setFont("Helvetica", 10)
     line(f"Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", 20)
 
-    # ---- Total score ----
+    # score total
     c.setFont("Helvetica-Bold", 14)
     line("Overall score", 20)
 
     c.setFont("Helvetica", 12)
     line(f"Total score: {total_score_pct:.1f} %", 18)
 
-    # ---- Score by phase ----
+    # score by phase
     c.setFont("Helvetica-Bold", 14)
     line("Score by phase", 20)
 
@@ -181,7 +181,7 @@ def build_pdf(
     for phase, score in phase_scores_pct.items():
         line(f"- {phase}: {score:.1f} %", 14)
 
-    # ---- Priority recommendations ----
+    # priority recommendations go here
     c.setFont("Helvetica-Bold", 14)
     line("Priority recommendations", 20)
 
@@ -198,7 +198,7 @@ def build_pdf(
             line(f"[{tag}] {r['id']} ({r['phase']}):", 14)
             line(f"  {r['recommendation']}", 14)
 
-    # ---- Optional appendix ----
+    # optional appendix
     c.showPage()
     y = height - 2 * cm
 
@@ -266,7 +266,7 @@ with tabs[0]:
             st.markdown("**Reference**")
             st.write(", ".join(refs) if refs else "-")
 
-        # Evidence (expander)
+        # Evidence che si espande se ci clicchi
         evidence = ensure_list(control.get("evidence"))
         with st.expander("Evidence required"):
             if evidence:
