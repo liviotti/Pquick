@@ -1,0 +1,382 @@
+{
+  "schema_version": "1.0",
+  "tool": "PQuick",
+  "answer_options": ["yes", "partial", "no", "na"],
+  "phases": [
+    {
+      "id": "inventory",
+      "name": "Inventory",
+      "description": "Identify cryptographic assets and dependencies (internal and external).",
+      "controls": [
+        {
+          "id": "INV-01",
+          "question": "Have all non-quantum-safe cryptographic assets been identified?",
+          "reference": ["ID.AM-01", "ID.AM-02", "GV.PO-01"],
+          "owner": ["Cybersecurity Architect", "Cybersecurity Implementer"],
+          "horizon": "Immediate",
+          "evidence": [
+            "Cryptographic Asset Inventory (export/CMDB/CSV) including: system/app, crypto library/module, algorithm, key sizes, certificates/PKI usage, location, owner.",
+            "Documented method used for discovery (manual review, scanning, SBOM, code search, config audit).",
+            "Last update date + responsible role."
+          ],
+          "actions": {
+            "yes": "Maintain an up-to-date cryptographic asset inventory.",
+            "partial": "Complete the inventory by including legacy systems and overlooked repositories.",
+            "no": "Initiate an immediate cryptographic asset census to establish a baseline."
+          }
+        },
+        {
+          "id": "INV-02",
+          "question": "Have all cryptographically protected assets been identified and assessed?",
+          "reference": ["PR.DS-01", "PR.DS-02", "PR.DS-11", "GV.PO-01"],
+          "owner": ["Cybersecurity Architect", "Cybersecurity Implementer"],
+          "horizon": "Immediate",
+          "evidence": [
+            "List of data/assets protected by cryptography (data at rest/in transit/signatures), mapped to confidentiality needs and retention horizon.",
+            "Classification or criticality rating for each protected asset (business impact).",
+            "Link/mapping from protected assets to crypto mechanisms used (ties to inventory)."
+          ],
+          "actions": {
+            "yes": "Perform periodic reassessments of cryptographically protected assets.",
+            "partial": "Integrate missing protected assets and update the assessment scope",
+            "no": "Launch a structured assessment to identify where cryptography is used and why."
+          }
+        },
+        {
+          "id": "INV-03",
+          "question": "Have internal dependencies involving cryptography been mapped?",
+          "reference": ["ID.AM-03", "GV.OC-04"],
+          "owner": ["Cybersecurity Architect", "Cybersecurity Implementer"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Architecture/data-flow diagrams showing where cryptography is used across internal systems (APIs, TLS termination points, message queues, databases, HSM/KMS).",
+            "Dependency map between applications/services and crypto components (libraries, protocols, PKI services).",
+            "Identification of 'crypto choke points' (shared services) and legacy constraints."
+          ],
+          "actions": {
+            "yes": "Maintain an updated dependency map across internal systems.",
+            "partial": "Extend mapping to include supporting and ancillary systems.",
+            "no": "Initiate internal dependency mapping to identify critical data flows and trust boundaries."
+          }
+        },
+        {
+          "id": "INV-04",
+          "question": "Have external dependencies and suppliers relying on cryptography been identified?",
+          "reference": ["ID.AM-04", "GV.SC-04", "GV.SC-05", "GV.SC-07"],
+          "owner": ["Cybersecurity Architect", "Cybersecurity Implementer"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Supplier/third-party inventory including SaaS, cloud, MSP, PKI providers, payment/ID providers, and critical outsourced services.",
+            "For each supplier: crypto touchpoints (TLS, VPN, signing, storage encryption), and where keys/certs are managed.",
+            "Evidence of supplier PQC posture request/questionnaire or documented outreach."
+          ],
+          "actions": {
+            "yes": "Enforce cryptographic requirements through supplier contracts.",
+            "partial": "Complete and validate the supplier inventory, including relevant subcontractors.",
+            "no": "Initiate supplier assessment focusing on cryptographic usage and shared services."
+          }
+        }
+      ]
+    },
+    {
+      "id": "risk_assessment",
+      "name": "Risk Assessment",
+      "description": "Assess quantum vulnerability, threats, impacts, and migration effort to prioritize action.",
+      "controls": [
+        {
+          "id": "RA-01",
+          "question": "Has the quantum vulnerability of cryptographic assets been assessed?",
+          "reference": ["ID.RA-01", "ID.RA-08", "GV.RM-03"],
+          "owner": ["Cybersecurity Architect", "Cybersecurity Implementer", "Cybersecurity Risk Manager"],
+          "horizon": "Immediate",
+          "evidence": [
+            "Documented assessment of which crypto assets are vulnerable to Shor/Grover class attacks (e.g., RSA/ECC exposure).",
+            "Assumptions on data lifetime (how long confidentiality must hold) and HNDL relevance.",
+            "Risk model notes (method used, scope, date, owners)."
+          ],
+          "actions": {
+            "yes": "Maintain an up-to-date quantum risk model and documented assumptions.",
+            "partial": "Integrate missing scenarios (e.g., harvest-now-decrypt-later) into the assessment.",
+            "no": "Initiate a quantum vulnerability assessment to prioritize exposed assets."
+          }
+        },
+        {
+          "id": "RA-02",
+          "question": "Have relevant quantum-related threat scenarios been identified and analysed?",
+          "reference": ["ID.RA-05", "ID.RA-06"],
+          "owner": ["Cyber Threat Intelligence Specialist", "Cybersecurity Risk Manager", "Penetration Tester"],
+          "horizon": "Immediate",
+          "evidence": [
+            "Threat scenarios list (e.g., HNDL, compromise of PKI, code-signing, VPN/TLS interception, long-term archives).",
+            "Impact analysis per scenario (CIA + operational impact), linked to critical assets/processes.",
+            "Input sources: CTI reports, incident history, sector threat profile."
+          ],
+          "actions": {
+            "yes": "Maintain an impact matrix aligned with business and technological changes",
+            "partial": "Extend the analysis to uncovered assets or business processes.",
+            "no": "Perform a threat and impact analysis to estimate potential consequences."
+          }
+        },
+        {
+          "id": "RA-03",
+          "question": "Has the effort required for PQC migration been estimated?",
+          "reference": ["GV.RM-03", "ID.IM-04"],
+          "owner": ["Cybersecurity Risk Manager", "Cybersecurity Architect", "Cybersecurity Implementer"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Effort estimate document (people-days/cost) covering: discovery, design, testing, deployment, rollback/contingency.",
+            "Dependency constraints list (vendors, legacy systems, protocol limitations, hardware/HSM constraints).",
+            "Skills/tooling gap assessment (training needs, external support)."
+          ],
+          "actions": {
+            "yes": "Maintain updated effort estimates within the PQC roadmap.",
+            "partial": "Integrate missing cost components (skills, testing, vendor constraints).",
+            "no": "Perform an effort analysis to estimate migration workload and dependencies."
+          }
+        },
+        {
+          "id": "RA-04",
+          "question": "Has PQC-related risk been calculated and prioritized?",
+          "reference": ["ID.RA-06", "GV.RM-03"],
+          "owner": ["Cybersecurity Risk Manager", "Cybersecurity Architect", "Cybersecurity Implementer"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Risk register entries specific to PQC (risk statement, likelihood, impact, current controls).",
+            "Prioritization criteria (asset criticality, data lifetime, exposure, supplier dependency, feasibility).",
+            "Resulting ranked list of assets/systems for migration sequencing."
+          ],
+          "actions": {
+            "yes": "Maintain a risk register reflecting PQC exposure and business priorities.",
+            "partial": "Complete risk prioritization by aligning scores with asset criticality.",
+            "no": "Execute risk calculation to define migration order and urgency."
+          }
+        }
+      ]
+    },
+    {
+      "id": "compliance",
+      "name": "Compliance",
+      "description": "Assess compliance with general and sector-specific requirements; ensure alignment with standards and guidance.",
+      "controls": [
+        {
+          "id": "COMP-01",
+          "question": "Has compliance with general regulatory and standard requirements been assessed?",
+          "reference": ["GV.PO-02", "GV.PO-01", "ID.IM-01"],
+          "owner": ["Cyber Legal, Policy and Compliance Officer"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Compliance mapping document (requirements → existing controls → gaps) for general obligations.",
+            "Audit evidence pack (policies, procedures, logs, prior audit reports) supporting compliance claims.",
+            "Named owner and review cadence."
+          ],
+          "actions": {
+            "yes": "Maintain periodic compliance audits and supporting evidence.",
+            "partial": "Extend compliance assessments to uncovered departments, assets, or processes.",
+            "no": "Perform a compliance gap analysis to identify applicable requirements and remediation actions."
+          }
+        },
+        {
+          "id": "COMP-02",
+          "question": "Has compliance with sector-specific regulatory requirements been assessed?",
+          "reference": ["GV.SC-01", "GV.SC-07"],
+          "owner": ["Cyber Legal, Policy and Compliance Officer"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Sector-specific obligations list (applicable regulation/authority requirements) and applicability rationale.",
+            "Gap analysis and remediation plan tailored to sector requirements (including reporting/notification duties).",
+            "Evidence of governance involvement (minutes, approvals, compliance sign-off)."
+          ],
+          "actions": {
+            "yes": "Perform regular reviews against applicable sector-specific regulations and obligations.",
+            "partial": "Complete the sector-specific gap analysis by mapping existing controls to regulatory requirements.",
+            "no": "Initiate a sector-specific regulatory assessment to identify obligations and reporting expectations."
+          }
+        },
+        {
+          "id": "COMP-03",
+          "question": "Is alignment with PQC-related standards and guidance ensured?",
+          "reference": ["ID.IM-01", "GV.RM-03"],
+          "owner": ["CISO"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "List of adopted/monitored standards and guidance (e.g., NIST PQC, ETSI, ENISA, national guidance), with review date.",
+            "Internal position statement: which PQC approaches are allowed (hybrid, crypto-agility, algorithm choices) and why.",
+            "Traceability from guidance → roadmap decisions (link to PLAN-01)."
+          ],
+          "actions": {
+            "yes": "Maintain alignment with applicable PQC-related standards and strategic guidance.",
+            "partial": "Integrate newly issued standards, guidance, and recommendations into internal planning.",
+            "no": "Initiate a standards alignment activity to identify relevant PQC frameworks and guidance."
+          }
+        }
+      ]
+    },
+    {
+      "id": "planning",
+      "name": "Planning",
+      "description": "Define the roadmap and integrate policies, supplier management, budget, and training.",
+      "controls": [
+        {
+          "id": "PLAN-01",
+          "question": "Has a post-quantum cryptography roadmap been defined?",
+          "reference": ["GV.RM-03", "ID.IM-01", "ID.RA-08", "GV.OC-4", "GV.PO-01"],
+          "owner": ["CISO"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Formal PQC roadmap document with milestones, timelines, dependencies, owners, and success criteria.",
+            "Prioritized migration sequence linked to risk results (RA-04) and inventory scope (INV-*).",
+            "Plan includes pilot/testing, rollout, fallback/rollback strategy, and communications."
+          ],
+          "actions": {
+            "yes": "Maintain and periodically update the PQC roadmap as scope, risks, and standards evolve.",
+            "partial": "Integrate missing milestones, dependencies, or pilot activities into the existing roadmap",
+            "no": "Define a PQC roadmap outlining phases, priorities, timelines, and success criteria."
+          }
+        },
+        {
+          "id": "PLAN-02",
+          "question": "Have internal policies and procedures been updated to address PQC?",
+          "reference": ["GV.SC-01", "GV.SC-07"],
+          "owner": ["Cyber Legal, Policy and Compliance Officer", "CISO"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Updated crypto policy/procedure documents including PQC strategy, crypto-agility requirements, exception handling.",
+            "Change control / approval evidence (policy approval record, version history).",
+            "Internal communication/training note that policies were disseminated."
+          ],
+          "actions": {
+            "yes": "Maintain governance over updated cryptographic policies and procedures addressing PQC.",
+            "partial": "Extend existing policies to include PQC requirements, crypto agility, and exception handling.",
+            "no": "Update internal policies and procedures to formally address PQC strategy and controls."
+          }
+        },
+        {
+          "id": "PLAN-03",
+          "question": "Has supplier management been integrated into the PQC strategy?",
+          "reference": ["GV.SC-05", "GV.SC-01", "GV.SC-07", "ID.RA-08"],
+          "owner": ["CISO"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Supplier contract clauses / procurement requirements addressing cryptography and PQC readiness (or roadmap commitments).",
+            "Supplier questionnaire results or attestations on PQC support and crypto-agility.",
+            "Escalation plan for non-compliant suppliers (mitigation/alternative suppliers)."
+          ],
+          "actions": {
+            "yes": "Maintain PQC-related requirements and cryptographic clauses within supplier management processes.",
+            "partial": "Extend PQC requirements to additional suppliers, subcontractors, and critical services.",
+            "no": "Initiate supplier management activities focused on PQC readiness and cryptographic dependencies."
+          }
+        },
+        {
+          "id": "PLAN-04",
+          "question": "Have financial resources for PQC migration been planned and approved?",
+          "reference": ["GV.PO-01", "ID.IM-04"],
+          "owner": ["CISO"],
+          "horizon": "Short-Term",
+          "evidence": [
+            "Budget plan covering tooling, vendor upgrades, testing, training, external consulting, and operational overhead.",
+            "Approval evidence (budget sign-off, procurement request, funding allocation).",
+            "Cost tracking mechanism aligned to roadmap milestones."
+          ],
+          "actions": {
+            "yes": "Maintain an approved PQC budget aligned with the defined roadmap and priorities.",
+            "partial": "Integrate missing cost components such as skills, tooling, testing, and vendor support.",
+            "no": "Define the required PQC budget and obtain formal financial approval."
+          }
+        },
+        {
+          "id": "PLAN-05",
+          "question": "Have training and awareness activities been planned?",
+          "reference": ["PR.AT-01", "PR.AT-02", "GV.RR-04", "GV.PO-01"],
+          "owner": ["CISO"],
+          "horizon": "Medium-Term",
+          "evidence": [
+            "Training plan (audience, modules, schedule) covering PQC basics, crypto-agility, migration impacts, roles/responsibilities.",
+            "Attendance records or LMS exports for completed trainings.",
+            "Awareness materials distributed (slides, internal comms, FAQs)."
+          ],
+          "actions": {
+            "yes": "Maintain a structured training and awareness program addressing PQC risks and responsibilities.",
+            "partial": "Extend training activities to additional technical, security, and procurement roles",
+            "no": "Launch baseline training and awareness initiatives on post-quantum cryptography."
+          }
+        }
+      ]
+    },
+    {
+      "id": "monitoring",
+      "name": "Monitoring",
+      "description": "Continuously monitor standards/regulations, vulnerabilities, supplier readiness, and roadmap progress.",
+      "controls": [
+        {
+          "id": "MON-01",
+          "question": "Is regulatory and standards evolution related to PQC continuously monitored?",
+          "reference": ["ID.RA-08", "GV.PO-02", "GV.SC-01"],
+          "owner": ["CISO", "Cyber Legal, Policy and Compliance Officer"],
+          "horizon": "Medium-Term",
+          "evidence": [
+            "Documented monitoring process (sources, cadence, ownership) for PQC-related regulations/standards.",
+            "Change log capturing relevant updates and resulting internal actions.",
+            "Evidence of periodic review meetings or reports."
+          ],
+          "actions": {
+            "yes": "Maintain continuous monitoring of PQC-related regulations, standards, and guidance.",
+            "partial": "Integrate newly issued regulatory updates and standards into periodic reviews.",
+            "no": "Establish a formal process to monitor regulatory and standards evolution related to PQC."
+          }
+        },
+        {
+          "id": "MON-02",
+          "question": "Are cryptographic vulnerabilities continuously monitored?",
+          "reference": ["ID.RA-08", "ID.RA-08", "DE.CM-01"],
+          "owner": ["Cyber Threat Intelligence Specialist", "Cybersecurity Implementer", "Cybersecurity Auditor"],
+          "horizon": "Medium-Term",
+          "evidence": [
+            "Vulnerability monitoring setup (feeds, scanners, CVE tracking) including crypto libraries and dependencies.",
+            "SOC/CTI procedures for triage, patching, and exception handling.",
+            "Sample ticket(s)/report(s) showing detection → remediation workflow."
+          ],
+          "actions": {
+            "yes": "Maintain continuous monitoring of cryptographic and PQC-related vulnerabilities.",
+            "partial": "Extend vulnerability monitoring to additional cryptographic libraries, platforms, and vendors.",
+            "no": "Integrate cryptographic vulnerability monitoring into SOC and threat intelligence processes."
+          }
+        },
+        {
+          "id": "MON-03",
+          "question": "Are external dependencies and suppliers periodically audited for PQC readiness?",
+          "reference": ["GV.SC-07", "GV.SC-07", "DE.CM-01"],
+          "owner": ["Cybersecurity Auditor", "CISO", "Cybersecurity Architect"],
+          "horizon": "Medium-Term",
+          "evidence": [
+            "Audit plan and audit reports for suppliers/third parties focused on crypto/PQC readiness.",
+            "Supplier evidence (attestations, roadmap statements, test results, compliance reports).",
+            "Corrective action tracking for audit findings."
+          ],
+          "actions": {
+            "yes": "Maintain periodic audits of suppliers and external dependencies focusing on PQC readiness.",
+            "partial": "Extend audit scope to include additional suppliers, subcontractors, or shared services.",
+            "no": "Conduct an initial audit of external dependencies and suppliers for PQC readiness."
+          }
+        },
+        {
+          "id": "MON-04",
+          "question": "Is progress of the PQC roadmap tracked and reported?",
+          "reference": ["ID.IM-01", "GV.RM-03"],
+          "owner": ["CISO"],
+          "horizon": "Medium-Term",
+          "evidence": [
+            "KPIs/dashboard or status reports showing roadmap progress (milestones completed, blockers, risks).",
+            "Governance reporting evidence (steering committee minutes, periodic updates).",
+            "Issue/risk log linked to roadmap and mitigation actions."
+          ],
+          "actions": {
+            "yes": "Maintain KPIs and dashboards to track PQC roadmap progress and implementation status.",
+            "partial": "Extend progress tracking to include suppliers, legacy systems, and validation milestones.",
+            "no": "Establish formal tracking and reporting mechanisms for PQC roadmap progress."
+          }
+        }
+      ]
+    }
+  ]
+}
