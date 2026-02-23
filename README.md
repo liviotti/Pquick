@@ -37,3 +37,4 @@ PQuick is a web-based assessment tool designed to help Italian organizations eva
 ```bash
 git clone https://github.com/liviotti/Pquick.git
 cd Pquick
+streamlit run tool.py
